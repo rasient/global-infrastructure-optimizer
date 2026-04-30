@@ -1,0 +1,70 @@
+[
+  {
+    "city": "Budapest",
+    "country": "Hungary",
+    "density": "medium-high",
+    "dominant_modes": ["metro", "tram", "bus", "walking", "car"],
+    "strengths": [
+      "strong tram backbone",
+      "dense inner-city public transport",
+      "walkable historic core",
+      "Danube-based spatial identity"
+    ],
+    "weaknesses": [
+      "outer district transfer friction",
+      "car pressure on bridges and key corridors",
+      "cycling network discontinuities",
+      "uneven multimodal integration"
+    ],
+    "opportunities": [
+      "improve intermodal hubs",
+      "strengthen bike-to-transit links",
+      "use river crossings as system bottleneck analysis points",
+      "expand real-time passenger information integration"
+    ]
+  },
+  {
+    "city": "Vienna",
+    "country": "Austria",
+    "density": "medium-high",
+    "dominant_modes": ["metro", "tram", "bus", "walking", "cycling"],
+    "strengths": [
+      "strong integrated public transport",
+      "high quality urban design",
+      "good ticketing integration"
+    ],
+    "weaknesses": [
+      "suburban dependency patterns",
+      "capacity pressure in peak zones",
+      "last-mile variation outside dense areas"
+    ],
+    "opportunities": [
+      "improve suburban multimodal nodes",
+      "expand cycling integration",
+      "optimize peak-time load distribution"
+    ]
+  },
+  {
+    "city": "Cape Town",
+    "country": "South Africa",
+    "density": "mixed",
+    "dominant_modes": ["minibus taxi", "bus", "rail", "car", "walking"],
+    "strengths": [
+      "flexible informal transport network",
+      "strategic corridors for bus and rail improvement",
+      "high need for integrated mobility solutions"
+    ],
+    "weaknesses": [
+      "spatial inequality",
+      "long commute distances",
+      "rail reliability challenges",
+      "fragmented modal governance"
+    ],
+    "opportunities": [
+      "integrate informal and formal transport",
+      "improve safe transfer hubs",
+      "target corridors with high social impact",
+      "combine decarbonization with accessibility"
+    ]
+  }
+]
