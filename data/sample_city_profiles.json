@@ -3,12 +3,36 @@
     "city": "Budapest",
     "country": "Hungary",
     "density": "medium-high",
-    "dominant_modes": ["metro", "tram", "bus", "walking", "car"],
+    "dominant_modes": ["metro", "tram", "bus", "trolleybus", "walking", "bicycle", "car"],
+    "layers": {
+      "global": ["air", "freight_rail", "highway", "pipeline"],
+      "regional": ["regional_rail", "intercity_rail", "coach_bus", "motorway"],
+      "urban": ["metro", "tram", "small_tram", "trolleybus", "bus", "suburban_rail", "car", "taxi", "delivery_van"],
+      "micro": ["walking", "bicycle", "e_bike", "scooter", "cargo_bike", "wheelchair_access"]
+    },
+    "mode_scores": {
+      "metro": {"capacity": 92, "speed": 86, "coverage": 72, "emissions": 88, "accessibility": 74, "resilience": 78},
+      "tram": {"capacity": 78, "speed": 64, "coverage": 84, "emissions": 86, "accessibility": 82, "resilience": 80},
+      "small_tram": {"capacity": 58, "speed": 58, "coverage": 66, "emissions": 82, "accessibility": 78, "resilience": 70},
+      "trolleybus": {"capacity": 54, "speed": 52, "coverage": 63, "emissions": 84, "accessibility": 76, "resilience": 65},
+      "bus": {"capacity": 58, "speed": 50, "coverage": 86, "emissions": 55, "accessibility": 80, "resilience": 72},
+      "bicycle": {"capacity": 42, "speed": 48, "coverage": 55, "emissions": 98, "accessibility": 62, "resilience": 68},
+      "walking": {"capacity": 38, "speed": 30, "coverage": 76, "emissions": 100, "accessibility": 70, "resilience": 82},
+      "car": {"capacity": 42, "speed": 58, "coverage": 82, "emissions": 32, "accessibility": 64, "resilience": 45}
+    },
+    "interfaces": [
+      {"from": "regional_rail", "to": "metro", "friction": 0.45, "issue": "peak-time transfer pressure and timetable coordination"},
+      {"from": "metro", "to": "bicycle", "friction": 0.58, "issue": "bike parking and bike-lane continuity around stations"},
+      {"from": "tram", "to": "walking", "friction": 0.25, "issue": "generally strong stop density, but crossings vary"},
+      {"from": "bus", "to": "tram", "friction": 0.42, "issue": "waiting-time and priority-lane gaps"},
+      {"from": "car", "to": "transit", "friction": 0.68, "issue": "limited park-and-ride and bridge corridor pressure"},
+      {"from": "small_tram", "to": "metro", "friction": 0.36, "issue": "potential feeder mode for medium-density corridors"}
+    ],
     "strengths": [
       "strong tram backbone",
       "dense inner-city public transport",
       "walkable historic core",
-      "Danube-based spatial identity"
+      "multiple urban rail layers"
     ],
     "weaknesses": [
       "outer district transfer friction",
@@ -20,6 +44,7 @@
       "improve intermodal hubs",
       "strengthen bike-to-transit links",
       "use river crossings as system bottleneck analysis points",
+      "test small tram corridors as a missing-middle mobility layer",
       "expand real-time passenger information integration"
     ]
   },
@@ -27,44 +52,56 @@
     "city": "Vienna",
     "country": "Austria",
     "density": "medium-high",
-    "dominant_modes": ["metro", "tram", "bus", "walking", "cycling"],
-    "strengths": [
-      "strong integrated public transport",
-      "high quality urban design",
-      "good ticketing integration"
+    "dominant_modes": ["metro", "tram", "bus", "walking", "bicycle"],
+    "layers": {
+      "global": ["air", "freight_rail", "highway"],
+      "regional": ["regional_rail", "intercity_rail", "coach_bus", "motorway"],
+      "urban": ["metro", "tram", "bus", "suburban_rail", "car"],
+      "micro": ["walking", "bicycle", "e_bike", "wheelchair_access"]
+    },
+    "mode_scores": {
+      "metro": {"capacity": 94, "speed": 88, "coverage": 80, "emissions": 90, "accessibility": 84, "resilience": 86},
+      "tram": {"capacity": 80, "speed": 66, "coverage": 88, "emissions": 88, "accessibility": 86, "resilience": 84},
+      "bus": {"capacity": 56, "speed": 54, "coverage": 82, "emissions": 58, "accessibility": 82, "resilience": 74},
+      "bicycle": {"capacity": 52, "speed": 52, "coverage": 72, "emissions": 98, "accessibility": 76, "resilience": 78},
+      "walking": {"capacity": 42, "speed": 30, "coverage": 84, "emissions": 100, "accessibility": 82, "resilience": 86}
+    },
+    "interfaces": [
+      {"from": "regional_rail", "to": "metro", "friction": 0.22, "issue": "strong integration, peak capacity still matters"},
+      {"from": "metro", "to": "walking", "friction": 0.18, "issue": "high-quality pedestrian access in core areas"},
+      {"from": "tram", "to": "bicycle", "friction": 0.32, "issue": "bike integration varies by corridor"},
+      {"from": "suburban_rail", "to": "micro", "friction": 0.40, "issue": "last-mile variation outside dense areas"}
     ],
-    "weaknesses": [
-      "suburban dependency patterns",
-      "capacity pressure in peak zones",
-      "last-mile variation outside dense areas"
-    ],
-    "opportunities": [
-      "improve suburban multimodal nodes",
-      "expand cycling integration",
-      "optimize peak-time load distribution"
-    ]
+    "strengths": ["strong integrated public transport", "high quality urban design", "good ticketing integration"],
+    "weaknesses": ["suburban dependency patterns", "capacity pressure in peak zones", "last-mile variation outside dense areas"],
+    "opportunities": ["improve suburban multimodal nodes", "expand cycling integration", "optimize peak-time load distribution"]
   },
   {
     "city": "Cape Town",
     "country": "South Africa",
     "density": "mixed",
-    "dominant_modes": ["minibus taxi", "bus", "rail", "car", "walking"],
-    "strengths": [
-      "flexible informal transport network",
-      "strategic corridors for bus and rail improvement",
-      "high need for integrated mobility solutions"
+    "dominant_modes": ["minibus_taxi", "bus", "rail", "car", "walking"],
+    "layers": {
+      "global": ["air", "maritime", "freight_rail", "highway"],
+      "regional": ["regional_rail", "coach_bus", "motorway"],
+      "urban": ["rail", "bus", "minibus_taxi", "car", "delivery_van"],
+      "micro": ["walking", "bicycle", "wheelchair_access"]
+    },
+    "mode_scores": {
+      "rail": {"capacity": 78, "speed": 62, "coverage": 52, "emissions": 84, "accessibility": 50, "resilience": 45},
+      "bus": {"capacity": 58, "speed": 48, "coverage": 58, "emissions": 56, "accessibility": 58, "resilience": 55},
+      "minibus_taxi": {"capacity": 48, "speed": 60, "coverage": 82, "emissions": 45, "accessibility": 72, "resilience": 78},
+      "walking": {"capacity": 38, "speed": 28, "coverage": 70, "emissions": 100, "accessibility": 48, "resilience": 60},
+      "car": {"capacity": 42, "speed": 56, "coverage": 76, "emissions": 30, "accessibility": 52, "resilience": 44}
+    },
+    "interfaces": [
+      {"from": "rail", "to": "minibus_taxi", "friction": 0.72, "issue": "fragmented formal-informal integration"},
+      {"from": "bus", "to": "walking", "friction": 0.62, "issue": "safety and access around transfer points"},
+      {"from": "car", "to": "transit", "friction": 0.70, "issue": "spatial inequality and long commute patterns"},
+      {"from": "regional", "to": "urban", "friction": 0.68, "issue": "long-distance commuting and governance fragmentation"}
     ],
-    "weaknesses": [
-      "spatial inequality",
-      "long commute distances",
-      "rail reliability challenges",
-      "fragmented modal governance"
-    ],
-    "opportunities": [
-      "integrate informal and formal transport",
-      "improve safe transfer hubs",
-      "target corridors with high social impact",
-      "combine decarbonization with accessibility"
-    ]
+    "strengths": ["flexible informal transport network", "strategic corridors for bus and rail improvement", "high need for integrated mobility solutions"],
+    "weaknesses": ["spatial inequality", "long commute distances", "rail reliability challenges", "fragmented modal governance"],
+    "opportunities": ["integrate informal and formal transport", "improve safe transfer hubs", "target corridors with high social impact", "combine decarbonization with accessibility"]
   }
 ]

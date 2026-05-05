@@ -7,7 +7,7 @@ from typing import Dict, List
 class OpenAIAnalysisService:
     """AI-assisted recommendation service.
 
-    The MVP uses mock output so the app runs without API keys.
+    The prototype uses mock output so the app runs without API keys.
     Later, connect this to the OpenAI API for richer structured analysis.
     """
 
@@ -17,6 +17,10 @@ class OpenAIAnalysisService:
 
     def analyze_profile(self, profile: Dict, gaps: List[str], recommendations: List[str]) -> str:
         city = profile.get("city", "the selected city")
+        layers = profile.get("layers", {})
+        layer_text = "\n".join(
+            f"- **{layer.title()}**: {', '.join(modes)}" for layer, modes in layers.items()
+        )
 
         if self.mock_mode or not self.api_key:
             gap_text = "\n".join(f"- {gap}" for gap in gaps)
@@ -24,7 +28,10 @@ class OpenAIAnalysisService:
             return f"""# Infrastructure System Diagnosis: {city}
 
 ## Core interpretation
-{city}'s mobility system should be treated as a portfolio of transport modes, not a competition between individual modes.
+{city}'s mobility system should be treated as a multi-layer portfolio, not a competition between individual transport modes.
+
+## Layers
+{layer_text}
 
 ## Main gaps
 {gap_text}

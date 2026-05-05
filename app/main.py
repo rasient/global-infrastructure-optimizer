@@ -10,9 +10,13 @@ from dotenv import load_dotenv
 from services.google_maps_service import GoogleMapsService
 from services.openai_service import OpenAIAnalysisService
 from services.scoring_service import (
+    generate_dot_graph,
     generate_recommendations,
     identify_system_gaps,
+    mode_portfolio_table,
+    run_scenario,
     score_city_profile,
+    score_interfaces,
 )
 
 
@@ -44,7 +48,7 @@ def main() -> None:
     )
 
     st.title("🚆 Global Infrastructure Optimizer")
-    st.caption("A prototype decision-support tool for multimodal transport systems.")
+    st.caption("Multi-layer infrastructure prototype: global → regional → urban → micro.")
 
     profiles = load_profiles()
     city_names = [f"{p['city']}, {p['country']}" for p in profiles]
@@ -55,9 +59,17 @@ def main() -> None:
     maps_service = GoogleMapsService()
     ai_service = OpenAIAnalysisService()
 
-    col1, col2 = st.columns([1, 1])
+    st.sidebar.header("Scenario levers")
+    scenario = {
+        "transit_priority": st.sidebar.slider("Transit priority", 0, 100, 50),
+        "active_mobility": st.sidebar.slider("Walking / cycling investment", 0, 100, 50),
+        "interface_investment": st.sidebar.slider("Transfer / interface investment", 0, 100, 50),
+        "car_pressure": st.sidebar.slider("Car pressure", 0, 100, 50),
+    }
 
-    with col1:
+    profile_col, score_col = st.columns([1, 1])
+
+    with profile_col:
         st.subheader("City Profile")
         st.write(f"**City:** {profile['city']}")
         st.write(f"**Country:** {profile['country']}")
@@ -69,7 +81,7 @@ def main() -> None:
         st.write("**Map reference:**")
         st.json(geocode)
 
-    with col2:
+    with score_col:
         st.subheader("System Scores")
         scores = score_city_profile(profile)
         score_df = pd.DataFrame([s.__dict__ for s in scores])
@@ -80,34 +92,79 @@ def main() -> None:
 
     st.divider()
 
-    gaps = identify_system_gaps(profile)
-    recommendations = generate_recommendations(profile)
+    layer_tab, interface_tab, scenario_tab, diagnosis_tab = st.tabs(
+        ["Layers", "Interfaces", "Scenario", "Diagnosis"]
+    )
 
-    gap_col, rec_col = st.columns(2)
+    with layer_tab:
+        st.subheader("Multi-Layer Transport Model")
+        layer_rows = []
+        for layer, modes in profile.get("layers", {}).items():
+            layer_rows.append({"layer": layer, "modes": ", ".join(modes)})
+        st.dataframe(pd.DataFrame(layer_rows), use_container_width=True, hide_index=True)
 
-    with gap_col:
-        st.subheader("Detected System Gaps")
-        for gap in gaps:
-            st.write(f"- {gap}")
+        st.subheader("Mode Portfolio")
+        mode_rows = mode_portfolio_table(profile)
+        if mode_rows:
+            st.dataframe(pd.DataFrame(mode_rows), use_container_width=True, hide_index=True)
+        else:
+            st.info("No mode-level scores defined for this profile yet.")
 
-    with rec_col:
-        st.subheader("Recommended Interventions")
-        for rec in recommendations:
-            st.write(f"- {rec}")
+        st.subheader("System Map")
+        st.graphviz_chart(generate_dot_graph(profile), use_container_width=True)
 
-    st.divider()
+    with interface_tab:
+        st.subheader("Interface Friction")
+        interface_scores = score_interfaces(profile)
+        if interface_scores:
+            interface_df = pd.DataFrame([s.__dict__ for s in interface_scores])
+            st.dataframe(interface_df, use_container_width=True, hide_index=True)
+            st.caption("Lower friction means a smoother transfer or connection between modes.")
+        else:
+            st.info("No interfaces defined for this profile yet.")
 
-    st.subheader("AI-Style System Diagnosis")
-    report = ai_service.analyze_profile(profile, gaps, recommendations)
-    st.markdown(report)
+    with scenario_tab:
+        st.subheader("Scenario Comparison")
+        base = {score.category: score.score for score in score_city_profile(profile)}
+        adjusted = run_scenario(profile, scenario)
+        comparison = pd.DataFrame(
+            [
+                {"metric": metric, "baseline": base.get(metric, 0), "scenario": adjusted.get(metric, 0), "delta": adjusted.get(metric, 0) - base.get(metric, 0)}
+                for metric in adjusted
+            ]
+        )
+        st.dataframe(comparison, use_container_width=True, hide_index=True)
+        st.bar_chart(comparison.set_index("metric")[["baseline", "scenario"]])
 
-    if st.button("Export Markdown Report"):
-        path = save_report(profile["city"], report)
-        st.success(f"Report saved to {path}")
+    with diagnosis_tab:
+        gaps = identify_system_gaps(profile)
+        recommendations = generate_recommendations(profile)
+
+        gap_col, rec_col = st.columns(2)
+
+        with gap_col:
+            st.subheader("Detected System Gaps")
+            for gap in gaps:
+                st.write(f"- {gap}")
+
+        with rec_col:
+            st.subheader("Recommended Interventions")
+            for rec in recommendations:
+                st.write(f"- {rec}")
+
+        st.divider()
+
+        st.subheader("AI-Style System Diagnosis")
+        report = ai_service.analyze_profile(profile, gaps, recommendations)
+        st.markdown(report)
+
+        if st.button("Export Markdown Report"):
+            path = save_report(profile["city"], report)
+            st.success(f"Report saved to {path}")
 
     st.sidebar.divider()
     st.sidebar.info(
-        "MVP runs in mock mode by default. Add API keys to .env later for real integrations."
+        "Prototype mode: mock data first, real APIs later. Designed for systems thinking, not production planning."
     )
 
 
